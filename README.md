@@ -18,7 +18,7 @@ beautifulsoup4
 ### Usage
  1. Go to notification center setting in MacOS and set the notification from Script Editor to "Alerts" (optional)
  ![Image of Notification Setting](https://github.com/ruochiz/Primenowslot/blob/master/figs/fig2.png)
- 2. ```$ pythonw primenow.py --enable-say --username=<your-amazon-email> --password=<your-password>```
+ 2. ```$ pythonw primenow.py --enable-say --username=<your-amazon-email> --password=<your-password> --sleep=<seconds-between-refresh>```
     - After you install wxpython, you should use pythonw instead of python
     - The username and password options are optional. You can type in them later
  3. After loading the page, navigate to the checkout page

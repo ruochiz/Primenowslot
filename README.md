@@ -11,9 +11,9 @@ The main changes are:
 3. Use multithreading, so that the browser won't freeze during sleeping
 
 ### Requirement
-CEFpython3
-wxpython
-beautifulsoup4
+- CEFpython3
+- wxpython
+- beautifulsoup4
 
 ### Usage
  1. Go to notification center setting in MacOS and set the notification from Script Editor to "Alerts" (optional)

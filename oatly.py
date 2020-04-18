@@ -21,23 +21,6 @@ def set_client_handlers(browser):
         browser.SetClientHandler(handler)
 
 
-class ParseCheckoutVisitor(object):
-    def Visit(self, value):
-        soup = bs4.BeautifulSoup(value, features="html.parser")
-        try:
-            link = soup.find('span', class_='cart-checkout-button').find("a")
-            if link:
-                dest = link['href']
-                print("Found link href {}{}".format(BASE_URL.strip('/'), dest))
-                browser.ExecuteJavascript("window.location.href = \"{}{}\"".format(BASE_URL.strip('/'), dest))
-                return
-            else:
-                print("Found no link under the checkout span!")
-
-        except AttributeError: 
-                print('Could not find checkout button!')
-
-
 def speakNotification():
     os.system('say "Slots for delivery opened"')
 
@@ -50,18 +33,16 @@ def macOS_notify(title, text, sound):
 class TimeSlotVisitor(object):
 
     def Visit(self, value):
-        no_slot_pattern = 'No delivery windows available'
-        if no_slot_pattern in value:
-            print("NO SLOTS!")
-            
-        else:
-            print('SLOTS OPEN!')
+        if value.count('Oatly, Oat Milk') > 0:
+            print('Grab your oatly!')
             for notification in notifications:
                 notification()
             try:
-                macOS_notify("SLOTS OPEN", "SLOTS OPEN", "default")
+                macOS_notify("Oatly", "Oatly", "default")
             except:
                 pass
+        else:
+            print('God! Why are you doing this to me')
 
         browser.Reload()
 
@@ -79,28 +60,16 @@ class LoadHandler(object):
             url = browser.GetUrl()
 
             print("At url: {}".format(url))
-            if url == BASE_URL:
-                print("Main page, Attempting to nav to Cart...")
-                browser.ExecuteJavascript("window.location.href = '{}'".format(CART_URL))
-            elif url.startswith("https://primenow.amazon.com/ap/signin"):
-                print("Signin page, Please sign in...")
-                browser.ExecuteJavascript("document.getElementById('ap_email').value = '{}'".format(options["username"]))
-                browser.ExecuteJavascript("document.getElementById('ap_password').value = '{}'".format(options["password"]))
-                # browser.ExecuteJavascript("document.signIn.submit()")
-            elif url.startswith("https://primenow.amazon.com/ap/mfa"):
-                print("MFA Page. Enter your amazon MFA code.")
-            elif url.startswith(CART_URL):
-                print("Cart page, navigate to first order page...")
-                browser.GetMainFrame().GetSource(checkoutvisitor)
-            elif url.startswith(CHECKOUT_URL):
-                print("On checkout page! Check for timeslots....")
+
+            if FRONT_URL in url:
+                print("Store front page, Attempting to nav to Cart...")
+                browser.LoadUrl("https://primenow.amazon.com/search?k=oatly&p_95=A09H&merchantId=A3DSTXNB4XRS86&ref_=pn_sf_nav_sr_A09H")
+            elif SEARCH_URL in url:
                 v = parsed_args.sleep + random.random() * 5
                 print ("Sleep for %fs, then reload" % v)
                 pool.submit(refresh_without_freezing, v, browser)
                 
-            else:
-                print("Did not match any case urls. Doing nothing.")
-
+            
 
 def check_versions():
     ver = cef.GetVersion()
@@ -152,36 +121,21 @@ class MyApp(wx.App):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--enable-say', action='store_true', help='Enable speech notiifcations')
-parser.add_argument('-u', '--username', help='Amazon Username (optional for autocomplete)')
-parser.add_argument('-c', '--password', help='Amazon Password (optional for autocomplete)')
-parser.add_argument('--sleep', default=30, help='How long to sleep', type=int)
-
+parser.add_argument('--sleep', default=30, help='Amazon Username (optional for autocomplete)', type=int)
+FRONT_URL = "https://primenow.amazon.com/storefront"
+SEARCH_URL = "https://primenow.amazon.com/search"
 parsed_args = parser.parse_args()
-BASE_URL = "https://primenow.amazon.com/"
-CART_URL = "https://primenow.amazon.com/cart"
-CHECKOUT_URL = "https://primenow.amazon.com/checkout/enter-checkout"
 
 
 notifications = []
 pool = ThreadPoolExecutor(max_workers=1)
 
 timeslotvisitor = TimeSlotVisitor()
-checkoutvisitor = ParseCheckoutVisitor()
-options = {
-            "username": "<AMAZONEMAIL>",
-            "password": "<AMAZONPW>"
-        }
+
 
 if parsed_args.enable_say:
     print("Speech support enabled.")
     notifications.append(speakNotification)
-
-if parsed_args.username:
-    options['username'] = parsed_args.username
-
-if parsed_args.password:
-    options['password'] = parsed_args.password
-
 
 app = MyApp()
 app.MainLoop()

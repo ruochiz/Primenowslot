@@ -6,7 +6,7 @@ This repo is modified based on this work:
 https://github.com/benh57/PrimeNowNotifier
 
 The main changes are:
-1. Add a notification to the macOS notification center. 
+1. When slots are open, it will pop-up a notification to the macOS notification center. 
 2. Use the wxpython framework to make the IO within the browser functioning normally
 3. Use multithreading, so that the browser won't freeze during sleeping
 

@@ -25,3 +25,5 @@ The main changes are:
  4. Wait for the notification for new slots~
  
  ![Image of Notification](https://github.com/ruochiz/Primenowslot/blob/master/figs/fig1.png)
+ 
+ 5.For those who are addicted to Oatly oat milk. Run oatly.py for checking if it's in stock again...

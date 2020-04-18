@@ -63,7 +63,7 @@ class LoadHandler(object):
 
             if FRONT_URL in url:
                 print("Store front page, Attempting to nav to Cart...")
-                browser.LoadUrl("https://primenow.amazon.com/search?k=oatly&p_95=A09H&merchantId=A3DSTXNB4XRS86&ref_=pn_sf_nav_sr_A09H")
+                browser.LoadUrl("https://primenow.amazon.com/search?k=oatly")
             elif SEARCH_URL in url:
                 v = parsed_args.sleep + random.random() * 5
                 print ("Sleep for %fs, then reload" % v)

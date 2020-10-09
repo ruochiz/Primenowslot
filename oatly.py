@@ -141,3 +141,7 @@ app = MyApp()
 app.MainLoop()
 # Important: do the wx cleanup before calling Shutdown
 del app
+
+
+
+# sth to do
